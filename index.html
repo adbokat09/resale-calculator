@@ -4,39 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор перепродажу</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <h1>Калькулятор перепродажу</h1>
+        <p class="subtitle">Зміни кількість, ціну та комісію, щоб побачити приблизний результат.</p>
 
-        <div class="form">
-            <label for="purchasePrice">Ціна закупівлі одного товару, грн</label>
-            <input type="number" id="purchasePrice" placeholder="250">
+        <div class="row">
+            <span class="label">Кількість товарів</span>
+            <span class="value" id="quantityValue">10 шт.</span>
+        </div>
+        <input type="range" id="quantitySlider" class="slider" min="1" max="200" value="10" step="1">
 
-            <label for="delivery">Доставка всієї партії, грн</label>
-            <input type="number" id="delivery" placeholder="600">
+        <div class="row">
+            <span class="label">Закупівля за 1 шт.</span>
+            <span class="value" id="purchasePriceValue">250 грн</span>
+        </div>
+        <input type="range" id="purchasePriceSlider" class="slider" min="0" max="2000" value="250" step="10">
 
-            <label for="quantity">Кількість товарів</label>
-            <input type="number" id="quantity" placeholder="10">
+        <div class="row">
+            <span class="label">Доставка партії</span>
+            <span class="value" id="deliveryValue">300 грн</span>
+        </div>
+        <input type="range" id="deliverySlider" class="slider" min="0" max="3000" value="300" step="10">
 
-            <label for="salePrice">Ціна продажу одного товару, грн</label>
-            <input type="number" id="salePrice" placeholder="500">
+        <div class="row">
+            <span class="label">Продаж за 1 шт.</span>
+            <span class="value" id="salePriceValue">500 грн</span>
+        </div>
+        <input type="range" id="salePriceSlider" class="slider" min="0" max="3000" value="500" step="10">
 
-            <label for="commission">Комісія OLX, %</label>
-            <input type="number" id="commission" placeholder="5">
+        <div class="row">
+            <span class="label">Комісія OLX</span>
+            <span class="value" id="commissionValue">5%</span>
+        </div>
+        <input type="range" id="commissionSlider" class="slider" min="0" max="30" value="5" step="1">
+
+        <div class="divider"></div>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <span class="summary-label">Собівартість партії</span>
+                <span class="summary-value" id="totalCosts">0 грн</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">Виручка</span>
+                <span class="summary-value" id="revenue">0 грн</span>
+            </div>
         </div>
 
-        <div class="results">
-            <h2>Результати</h2>
-
-            <p>Загальні витрати: <span id="totalCosts">0 грн</span></p>
-            <p>Собівартість одного товару: <span id="unitCost">0 грн</span></p>
-            <p>Комісія з одного товару: <span id="unitCommission">0 грн</span></p>
-            <p>Прибуток з одного товару: <span id="unitProfit">0 грн</span></p>
-            <p>Загальний прибуток: <span id="totalProfit">0 грн</span></p>
-            <p>Рентабельність: <span id="profitability">0%</span></p>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <span class="summary-label">Собівартість одиниці</span>
+                <span class="summary-value" id="unitCost">0 грн</span>
+            </div>
+            <div class="summary-card">
+                <span class="summary-label">Комісія з одиниці</span>
+                <span class="summary-value" id="unitCommission">0 грн</span>
+            </div>
         </div>
+
+        <div class="result-box">
+            <span class="result-label">Орієнтовний валовий результат</span>
+            <span class="result-value" id="totalProfit">+0 грн</span>
+            <span class="result-caption">
+                Рентабельність: <span id="profitability">0%</span> ·
+                без урахування податків, повернень та непроданого товару.
+            </span>
+        </div>
+
+        <button id="saveBtn" class="save-btn">💾 Зберегти в історію</button>
+        <p id="statusMsg" class="status-msg"></p>
     </div>
 
     <script src="script.js"></script>

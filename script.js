@@ -5,86 +5,126 @@ if (tg) {
     tg.expand();
 }
 
-// Елементи вводу
-const purchasePriceInput = document.getElementById('purchasePrice');
-const deliveryInput = document.getElementById('delivery');
-const quantityInput = document.getElementById('quantity');
-const salePriceInput = document.getElementById('salePrice');
-const commissionInput = document.getElementById('commission');
+// Повзунки
+const quantitySlider = document.getElementById('quantitySlider');
+const purchasePriceSlider = document.getElementById('purchasePriceSlider');
+const deliverySlider = document.getElementById('deliverySlider');
+const salePriceSlider = document.getElementById('salePriceSlider');
+const commissionSlider = document.getElementById('commissionSlider');
 
-// Елементи виводу
+// Підписи поточних значень повзунків
+const quantityValueEl = document.getElementById('quantityValue');
+const purchasePriceValueEl = document.getElementById('purchasePriceValue');
+const deliveryValueEl = document.getElementById('deliveryValue');
+const salePriceValueEl = document.getElementById('salePriceValue');
+const commissionValueEl = document.getElementById('commissionValue');
+
+// Розрахункові поля
 const totalCostsEl = document.getElementById('totalCosts');
+const revenueEl = document.getElementById('revenue');
 const unitCostEl = document.getElementById('unitCost');
 const unitCommissionEl = document.getElementById('unitCommission');
-const unitProfitEl = document.getElementById('unitProfit');
 const totalProfitEl = document.getElementById('totalProfit');
 const profitabilityEl = document.getElementById('profitability');
 
-// Форматування чисел (гроші)
-function formatMoney(value) {
+const saveBtn = document.getElementById('saveBtn');
+const statusMsg = document.getElementById('statusMsg');
+
+let currentResult = null;
+
+// Форматування без знаку (для звичайних рядків)
+function formatMoneyPlain(value) {
     if (!isFinite(value)) return '0 грн';
-    return value.toLocaleString('uk-UA', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-    }) + ' грн';
+    return Math.round(value).toLocaleString('uk-UA') + ' грн';
+}
+
+// Форматування зі знаком +/- (для підсумкового блоку)
+function formatMoneySigned(value) {
+    if (!isFinite(value)) return '0 грн';
+    const rounded = Math.round(value);
+    const sign = rounded > 0 ? '+' : '';
+    return sign + rounded.toLocaleString('uk-UA') + ' грн';
 }
 
 function formatPercent(value) {
     if (!isFinite(value)) return '0%';
-    return value.toLocaleString('uk-UA', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-    }) + '%';
-}
-
-// Підсвічування прибутку/збитку кольором
-function setProfitColor(el, value) {
-    el.style.color = value < 0 ? '#e74c3c' : (value > 0 ? '#27ae60' : '#222');
+    return Math.round(value) + '%';
 }
 
 function calculate() {
-    // Зчитуємо значення, підставляючи 0, якщо поле порожнє
-    const purchasePrice = parseFloat(purchasePriceInput.value) || 0;
-    const delivery = parseFloat(deliveryInput.value) || 0;
-    const quantity = parseFloat(quantityInput.value) || 0;
-    const salePrice = parseFloat(salePriceInput.value) || 0;
-    const commission = parseFloat(commissionInput.value) || 0;
+    const quantity = parseFloat(quantitySlider.value) || 0;
+    const purchasePrice = parseFloat(purchasePriceSlider.value) || 0;
+    const delivery = parseFloat(deliverySlider.value) || 0;
+    const salePrice = parseFloat(salePriceSlider.value) || 0;
+    const commission = parseFloat(commissionSlider.value) || 0;
 
-    // Загальні витрати на всю партію
+    // Оновлюємо підписи поточних значень над кожним повзунком
+    quantityValueEl.textContent = quantity + ' шт.';
+    purchasePriceValueEl.textContent = purchasePrice.toLocaleString('uk-UA') + ' грн';
+    deliveryValueEl.textContent = delivery.toLocaleString('uk-UA') + ' грн';
+    salePriceValueEl.textContent = salePrice.toLocaleString('uk-UA') + ' грн';
+    commissionValueEl.textContent = commission + '%';
+
     const totalCosts = purchasePrice * quantity + delivery;
-
-    // Собівартість одного товару (якщо кількість > 0)
+    const revenue = salePrice * quantity;
     const unitCost = quantity > 0 ? totalCosts / quantity : 0;
-
-    // Комісія маркетплейсу з одного товару
     const unitCommission = salePrice * (commission / 100);
-
-    // Прибуток з одного товару
     const unitProfit = salePrice - unitCost - unitCommission;
-
-    // Загальний прибуток по всій партії
     const totalProfit = unitProfit * quantity;
-
-    // Рентабельність (прибуток відносно собівартості)
     const profitability = unitCost > 0 ? (unitProfit / unitCost) * 100 : 0;
 
-    // Виводимо результати
-    totalCostsEl.textContent = formatMoney(totalCosts);
-    unitCostEl.textContent = formatMoney(unitCost);
-    unitCommissionEl.textContent = formatMoney(unitCommission);
-    unitProfitEl.textContent = formatMoney(unitProfit);
-    totalProfitEl.textContent = formatMoney(totalProfit);
+    totalCostsEl.textContent = formatMoneyPlain(totalCosts);
+    revenueEl.textContent = formatMoneyPlain(revenue);
+    unitCostEl.textContent = formatMoneyPlain(unitCost);
+    unitCommissionEl.textContent = formatMoneyPlain(unitCommission);
+
+    totalProfitEl.textContent = formatMoneySigned(totalProfit);
+    totalProfitEl.style.color = totalProfit < 0 ? 'var(--red)' : 'var(--green)';
+
     profitabilityEl.textContent = formatPercent(profitability);
 
-    // Кольорове виділення прибутку/збитку
-    setProfitColor(unitProfitEl, unitProfit);
-    setProfitColor(totalProfitEl, totalProfit);
-    setProfitColor(profitabilityEl, profitability);
+    // Значення для відправки в бот при збереженні
+    currentResult = {
+        purchasePrice,
+        delivery,
+        quantity,
+        salePrice,
+        commission,
+        totalCosts: Math.round(totalCosts * 100) / 100,
+        revenue: Math.round(revenue * 100) / 100,
+        unitCost: Math.round(unitCost * 100) / 100,
+        unitCommission: Math.round(unitCommission * 100) / 100,
+        unitProfit: Math.round(unitProfit * 100) / 100,
+        totalProfit: Math.round(totalProfit * 100) / 100,
+        profitability: Math.round(profitability * 100) / 100,
+    };
 }
 
-// Перерахунок при кожній зміні будь-якого поля
-[purchasePriceInput, deliveryInput, quantityInput, salePriceInput, commissionInput]
-    .forEach(input => input.addEventListener('input', calculate));
+function showStatus(text, type) {
+    statusMsg.textContent = text;
+    statusMsg.className = 'status-msg ' + type;
+    setTimeout(() => {
+        statusMsg.textContent = '';
+        statusMsg.className = 'status-msg';
+    }, 3000);
+}
 
-// Початковий розрахунок при завантаженні сторінки
+saveBtn.addEventListener('click', () => {
+    if (!currentResult || currentResult.quantity <= 0) {
+        showStatus('Встановіть кількість товарів перед збереженням', 'error');
+        return;
+    }
+
+    if (!tg) {
+        console.log('Дані для відправки в бот:', currentResult);
+        showStatus('Відкрийте застосунок через Telegram, щоб зберегти', 'error');
+        return;
+    }
+
+    tg.sendData(JSON.stringify(currentResult));
+});
+
+[quantitySlider, purchasePriceSlider, deliverySlider, salePriceSlider, commissionSlider]
+    .forEach(slider => slider.addEventListener('input', calculate));
+
 calculate();
