@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор перепродажу</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Калькулятор перепродажу</h1>
+
+        <div class="form">
+            <label for="purchasePrice">Ціна закупівлі одного товару, грн</label>
+            <input type="number" id="purchasePrice" placeholder="250">
+
+            <label for="delivery">Доставка всієї партії, грн</label>
+            <input type="number" id="delivery" placeholder="600">
+
+            <label for="quantity">Кількість товарів</label>
+            <input type="number" id="quantity" placeholder="10">
+
+            <label for="salePrice">Ціна продажу одного товару, грн</label>
+            <input type="number" id="salePrice" placeholder="500">
+
+            <label for="commission">Комісія OLX, %</label>
+            <input type="number" id="commission" placeholder="5">
+        </div>
+
+        <div class="results">
+            <h2>Результати</h2>
+
+            <p>Загальні витрати: <span id="totalCosts">0 грн</span></p>
+            <p>Собівартість одного товару: <span id="unitCost">0 грн</span></p>
+            <p>Комісія з одного товару: <span id="unitCommission">0 грн</span></p>
+            <p>Прибуток з одного товару: <span id="unitProfit">0 грн</span></p>
+            <p>Загальний прибуток: <span id="totalProfit">0 грн</span></p>
+            <p>Рентабельність: <span id="profitability">0%</span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
