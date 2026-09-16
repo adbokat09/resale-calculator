@@ -12,12 +12,12 @@ const deliverySlider = document.getElementById('deliverySlider');
 const salePriceSlider = document.getElementById('salePriceSlider');
 const commissionSlider = document.getElementById('commissionSlider');
 
-// Підписи поточних значень повзунків
-const quantityValueEl = document.getElementById('quantityValue');
-const purchasePriceValueEl = document.getElementById('purchasePriceValue');
-const deliveryValueEl = document.getElementById('deliveryValue');
-const salePriceValueEl = document.getElementById('salePriceValue');
-const commissionValueEl = document.getElementById('commissionValue');
+// Поля ручного вводу числа
+const quantityInput = document.getElementById('quantityInput');
+const purchasePriceInput = document.getElementById('purchasePriceInput');
+const deliveryInput = document.getElementById('deliveryInput');
+const salePriceInput = document.getElementById('salePriceInput');
+const commissionInput = document.getElementById('commissionInput');
 
 // Розрахункові поля
 const totalCostsEl = document.getElementById('totalCosts');
@@ -32,13 +32,20 @@ const statusMsg = document.getElementById('statusMsg');
 
 let currentResult = null;
 
-// Форматування без знаку (для звичайних рядків)
+// Пари "повзунок <-> поле вводу", які мають бути синхронізовані
+const pairs = [
+    { slider: quantitySlider, input: quantityInput, minAllowed: 1 },
+    { slider: purchasePriceSlider, input: purchasePriceInput, minAllowed: 0 },
+    { slider: deliverySlider, input: deliveryInput, minAllowed: 0 },
+    { slider: salePriceSlider, input: salePriceInput, minAllowed: 0 },
+    { slider: commissionSlider, input: commissionInput, minAllowed: 0 },
+];
+
 function formatMoneyPlain(value) {
     if (!isFinite(value)) return '0 грн';
     return Math.round(value).toLocaleString('uk-UA') + ' грн';
 }
 
-// Форматування зі знаком +/- (для підсумкового блоку)
 function formatMoneySigned(value) {
     if (!isFinite(value)) return '0 грн';
     const rounded = Math.round(value);
@@ -51,19 +58,39 @@ function formatPercent(value) {
     return Math.round(value) + '%';
 }
 
+// Рух повзунка -> оновлюємо число в полі вводу
+function syncFromSlider(pair) {
+    pair.input.value = pair.slider.value;
+    calculate();
+}
+
+// Ручний ввід числа -> оновлюємо повзунок.
+// Якщо вписане значення більше за поточний максимум повзунка — розширюємо шкалу,
+// щоб бігунок міг відобразити це значення.
+function syncFromInput(pair) {
+    let val = parseFloat(pair.input.value);
+
+    if (isNaN(val)) {
+        val = parseFloat(pair.slider.value);
+    }
+    if (val < pair.minAllowed) {
+        val = pair.minAllowed;
+    }
+    if (val > parseFloat(pair.slider.max)) {
+        pair.slider.max = val;
+    }
+
+    pair.input.value = val;
+    pair.slider.value = val;
+    calculate();
+}
+
 function calculate() {
     const quantity = parseFloat(quantitySlider.value) || 0;
     const purchasePrice = parseFloat(purchasePriceSlider.value) || 0;
     const delivery = parseFloat(deliverySlider.value) || 0;
     const salePrice = parseFloat(salePriceSlider.value) || 0;
     const commission = parseFloat(commissionSlider.value) || 0;
-
-    // Оновлюємо підписи поточних значень над кожним повзунком
-    quantityValueEl.textContent = quantity + ' шт.';
-    purchasePriceValueEl.textContent = purchasePrice.toLocaleString('uk-UA') + ' грн';
-    deliveryValueEl.textContent = delivery.toLocaleString('uk-UA') + ' грн';
-    salePriceValueEl.textContent = salePrice.toLocaleString('uk-UA') + ' грн';
-    commissionValueEl.textContent = commission + '%';
 
     const totalCosts = purchasePrice * quantity + delivery;
     const revenue = salePrice * quantity;
@@ -83,7 +110,6 @@ function calculate() {
 
     profitabilityEl.textContent = formatPercent(profitability);
 
-    // Значення для відправки в бот при збереженні
     currentResult = {
         purchasePrice,
         delivery,
@@ -124,7 +150,19 @@ saveBtn.addEventListener('click', () => {
     tg.sendData(JSON.stringify(currentResult));
 });
 
-[quantitySlider, purchasePriceSlider, deliverySlider, salePriceSlider, commissionSlider]
-    .forEach(slider => slider.addEventListener('input', calculate));
+// Прив'язуємо події до кожної пари повзунок/поле вводу
+pairs.forEach(pair => {
+    // Повзунок рухається "наживо" — реагуємо одразу
+    pair.slider.addEventListener('input', () => syncFromSlider(pair));
+
+    // Число вводиться вручну — застосовуємо, коли користувач завершив ввід
+    // (натиснув Enter або забрав фокус з поля)
+    pair.input.addEventListener('change', () => syncFromInput(pair));
+    pair.input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            pair.input.blur();
+        }
+    });
+});
 
 calculate();

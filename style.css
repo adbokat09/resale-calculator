@@ -56,6 +56,44 @@ h1 {
     color: var(--text);
 }
 
+.value-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.value-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 17px;
+    font-family: inherit;
+    text-align: right;
+    width: 80px;
+    padding: 2px 0;
+    outline: none;
+    -moz-appearance: textfield;
+    transition: border-color 0.15s ease;
+}
+
+.value-input:focus {
+    border-bottom: 1px solid var(--green);
+}
+
+.value-input::-webkit-outer-spin-button,
+.value-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.unit {
+    color: var(--text);
+    font-weight: 700;
+    font-size: 17px;
+}
+
 /* Повзунок: тонка лінія без заливки + білий капсульний бігунок */
 .slider {
     -webkit-appearance: none;

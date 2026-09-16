@@ -10,35 +10,50 @@
 <body>
     <div class="container">
         <h1>Калькулятор перепродажу</h1>
-        <p class="subtitle">Зміни кількість, ціну та комісію, щоб побачити приблизний результат.</p>
+        <p class="subtitle">Рухайте повзунок або натисніть на число, щоб вписати точне значення.</p>
 
         <div class="row">
             <span class="label">Кількість товарів</span>
-            <span class="value" id="quantityValue">10 шт.</span>
+            <div class="value-wrap">
+                <input type="number" id="quantityInput" class="value-input" value="10" min="1">
+                <span class="unit">шт.</span>
+            </div>
         </div>
         <input type="range" id="quantitySlider" class="slider" min="1" max="200" value="10" step="1">
 
         <div class="row">
             <span class="label">Закупівля за 1 шт.</span>
-            <span class="value" id="purchasePriceValue">250 грн</span>
+            <div class="value-wrap">
+                <input type="number" id="purchasePriceInput" class="value-input" value="250" min="0">
+                <span class="unit">грн</span>
+            </div>
         </div>
         <input type="range" id="purchasePriceSlider" class="slider" min="0" max="2000" value="250" step="10">
 
         <div class="row">
             <span class="label">Доставка партії</span>
-            <span class="value" id="deliveryValue">300 грн</span>
+            <div class="value-wrap">
+                <input type="number" id="deliveryInput" class="value-input" value="300" min="0">
+                <span class="unit">грн</span>
+            </div>
         </div>
         <input type="range" id="deliverySlider" class="slider" min="0" max="3000" value="300" step="10">
 
         <div class="row">
             <span class="label">Продаж за 1 шт.</span>
-            <span class="value" id="salePriceValue">500 грн</span>
+            <div class="value-wrap">
+                <input type="number" id="salePriceInput" class="value-input" value="500" min="0">
+                <span class="unit">грн</span>
+            </div>
         </div>
         <input type="range" id="salePriceSlider" class="slider" min="0" max="3000" value="500" step="10">
 
         <div class="row">
             <span class="label">Комісія OLX</span>
-            <span class="value" id="commissionValue">5%</span>
+            <div class="value-wrap">
+                <input type="number" id="commissionInput" class="value-input" value="5" min="0">
+                <span class="unit">%</span>
+            </div>
         </div>
         <input type="range" id="commissionSlider" class="slider" min="0" max="30" value="5" step="1">
 
