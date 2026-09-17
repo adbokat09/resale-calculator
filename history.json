@@ -1,3 +1,51 @@
 {
-  "1590929586": []
+  "1590929586": [
+    {
+      "purchasePrice": 250,
+      "delivery": 300,
+      "quantity": 10,
+      "salePrice": 500,
+      "commission": 5,
+      "totalCosts": 2800,
+      "revenue": 5000,
+      "unitCost": 280,
+      "unitCommission": 25,
+      "unitProfit": 195,
+      "totalProfit": 1950,
+      "profitability": 69.64,
+      "date": "17.09.2026 08:29"
+    },
+    {
+      "purchasePrice": 250,
+      "delivery": 300,
+      "quantity": 10,
+      "salePrice": 500,
+      "commission": 12,
+      "totalCosts": 2800,
+      "revenue": 5000,
+      "unitCost": 280,
+      "unitCommission": 60,
+      "unitProfit": 160,
+      "totalProfit": 1600,
+      "profitability": 57.14,
+      "date": "17.09.2026 08:29"
+    }
+  ],
+  "1861956725": [
+    {
+      "purchasePrice": 150,
+      "delivery": 100,
+      "quantity": 3,
+      "salePrice": 410,
+      "commission": 8,
+      "totalCosts": 550,
+      "revenue": 1230,
+      "unitCost": 183.33,
+      "unitCommission": 32.8,
+      "unitProfit": 193.87,
+      "totalProfit": 581.6,
+      "profitability": 105.75,
+      "date": "17.09.2026 08:29"
+    }
+  ]
 }
